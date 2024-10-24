@@ -2,6 +2,7 @@ import librosa
 import numpy as np
 import os
 from sklearn.model_selection import train_test_split
+from tensorflow.keras import layers, models
 
 class DataLoader:
     def __init__(self, data_dir, genres, sample_rate=22050, duration=30):
@@ -30,3 +31,31 @@ class DataLoader:
     def split_data(self, features, labels, test_size=0.2):
         return train_test_split(features, labels, test_size=test_size, random_state=42)
 
+
+class GenreModel:
+    def __init__(self, input_shape, num_genres):
+        self.input_shape = input_shape
+        self.num_genres = num_genres
+        self.model = None
+
+    def build_model(self):
+        self.model = models.Sequential([
+            layers.Conv2D(32, (3, 3), activation='relu', input_shape=self.input_shape),
+            layers.MaxPooling2D((2, 2)),
+            layers.Conv2D(64, (3, 3), activation='relu'),
+            layers.MaxPooling2D((2, 2)),
+            layers.Conv2D(128, (3, 3), activation='relu'),
+            layers.MaxPooling2D((2, 2)),
+            layers.Flatten(),
+            layers.Dense(128, activation='relu'),
+            layers.Dropout(0.5),
+            layers.Dense(self.num_genres, activation='softmax')
+        ])
+
+    def compile_model(self):
+        self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+    def get_model(self):
+        return self.model
+    
+    
