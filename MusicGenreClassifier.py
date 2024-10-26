@@ -38,7 +38,7 @@ class GenreModel:
         self.num_genres = num_genres
         self.model = None
 
-    def build_model(self):
+    def first_model(self):
         self.model = models.Sequential([
             layers.Conv2D(32, (3, 3), activation='relu', input_shape=self.input_shape),
             layers.MaxPooling2D((2, 2)),
@@ -57,5 +57,4 @@ class GenreModel:
 
     def get_model(self):
         return self.model
-    
     
